@@ -22,45 +22,51 @@ Q.Sprite.extend("PlayerOne", {
             type: Q.SPRITE_FRIENDLY,
             speed: 10
         });
+        this.p.toBeDestroyed = false;
         this.add("GunOne");
         this.add("animation");
         this.on("hit", function (col) {
             if (col.obj.isA('Shot')) {
                 col.obj.destroy();
+                this.p.toBeDestroyed = true;
+                this.del("GunOne");
                 this.play("explode");
-                this.destroy();
                 Q.stageScene("endGame", 1, { label: "Green Won" });
             }
         });
+        this.on("kill", function () {
+            this.destroy();
+        });
     },
     step: function (dt) {
-        this.stage.collide(this);
-        if (Q.inputs['up']) {
-            this.p.y -= this.p.speed * Math.cos(this.p.angle * (Math.PI / 180));
-            this.p.x += this.p.speed * Math.sin(this.p.angle * (Math.PI / 180));
-
-            this.p.frame = (this.p.frame + 1) % 8;
-        }
-        if (Q.inputs['left']) {
-            this.p.angle -= this.p.speed;
-        }
-        if (Q.inputs['right']) {
-            this.p.angle += this.p.speed;
-        }
-        if (Q.inputs['down']) {
-            this.p.y += this.p.speed * Math.cos(this.p.angle * (Math.PI / 180));
-            this.p.x -= this.p.speed * Math.sin(this.p.angle * (Math.PI / 180));
-            if (this.p.frame != 0) {
-                this.p.frame = (this.p.frame - 1) % 8;
+        if (!this.p.toBeDestroyed) {
+            this.stage.collide(this);
+            if (Q.inputs['up']) {
+                this.p.y -= this.p.speed * Math.cos(this.p.angle * (Math.PI / 180));
+                this.p.x += this.p.speed * Math.sin(this.p.angle * (Math.PI / 180));
+                this.p.frame = (this.p.frame + 1) % 8;
             }
-            else {
-                this.p.frame = 7;
+            if (Q.inputs['left']) {
+                this.p.angle -= this.p.speed;
             }
-        }
-        this.p.x = clamp(this.p.x, 0 + (this.p.w / 2), Q.el.width - (this.p.w / 2));
-        this.p.y = clamp(this.p.y, 0 + (this.p.h / 2), Q.el.height - (this.p.h / 2));
+            if (Q.inputs['right']) {
+                this.p.angle += this.p.speed;
+            }
+            if (Q.inputs['down']) {
+                this.p.y += this.p.speed * Math.cos(this.p.angle * (Math.PI / 180));
+                this.p.x -= this.p.speed * Math.sin(this.p.angle * (Math.PI / 180));
+                if (this.p.frame != 0) {
+                    this.p.frame = (this.p.frame - 1) % 8;
+                }
+                else {
+                    this.p.frame = 7;
+                }
+            }
+            this.p.x = clamp(this.p.x, 0 + (this.p.w / 2), Q.el.width - (this.p.w / 2));
+            this.p.y = clamp(this.p.y, 0 + (this.p.h / 2), Q.el.height - (this.p.h / 2));
 
-        //console.log(this.p.x + " " + this.p.y + " " + this.p.angle);
+            //console.log(this.p.x + " " + this.p.y + " " + this.p.angle);
+        }
     }
 
 });
@@ -76,46 +82,52 @@ Q.Sprite.extend("PlayerTwo", {
             type: Q.SPRITE_FRIENDLY,
             speed: 10
         });
+        this.p.toBeDestroyed = false;
         this.add("GunTwo");
         this.add("animation");
         this.on('hit', function (col) {
             if (col.obj.isA('Shot')) {
-                this.play("explode");
-                this.destroy();
                 col.obj.destroy();
+                this.p.toBeDestroyed = true;
+                this.del("GunTwo");
+                this.play("explode");
                 Q.stageScene("endGame", 1, { label: "Blue Won" });
             }
         });
+        this.on("kill", function () {
+            this.destroy();
+        });
     },
     step: function (dt) {
-        this.stage.collide(this);
-        if (Q.inputs['player2up']) {
-            this.p.y -= this.p.speed * Math.cos(this.p.angle * (Math.PI / 180));
-            this.p.x += this.p.speed * Math.sin(this.p.angle * (Math.PI / 180));
-            this.p.frame = (this.p.frame + 1) % 8;
-        }
-        if (Q.inputs['player2left']) {
-            this.p.angle -= this.p.speed;
-        }
-        if (Q.inputs['player2right']) {
-            this.p.angle += this.p.speed;
-        }
-        if (Q.inputs['player2down']) {
-            this.p.y += this.p.speed * Math.cos(this.p.angle * (Math.PI / 180));
-            this.p.x -= this.p.speed * Math.sin(this.p.angle * (Math.PI / 180));
-            if (this.p.frame != 0) {
-                this.p.frame = (this.p.frame - 1) % 8;
+        if (!this.p.toBeDestroyed) {
+            this.stage.collide(this);
+            if (Q.inputs['player2up']) {
+                this.p.y -= this.p.speed * Math.cos(this.p.angle * (Math.PI / 180));
+                this.p.x += this.p.speed * Math.sin(this.p.angle * (Math.PI / 180));
+                this.p.frame = (this.p.frame + 1) % 8;
             }
-            else {
-                this.p.frame = 7;
+            if (Q.inputs['player2left']) {
+                this.p.angle -= this.p.speed;
             }
-        }
-        this.p.x = clamp(this.p.x, 0 + (this.p.w / 2), Q.el.width - (this.p.w / 2));
-        this.p.y = clamp(this.p.y, 0 + (this.p.h / 2), Q.el.height - (this.p.h / 2));
+            if (Q.inputs['player2right']) {
+                this.p.angle += this.p.speed;
+            }
+            if (Q.inputs['player2down']) {
+                this.p.y += this.p.speed * Math.cos(this.p.angle * (Math.PI / 180));
+                this.p.x -= this.p.speed * Math.sin(this.p.angle * (Math.PI / 180));
+                if (this.p.frame != 0) {
+                    this.p.frame = (this.p.frame - 1) % 8;
+                }
+                else {
+                    this.p.frame = 7;
+                }
+            }
+            this.p.x = clamp(this.p.x, 0 + (this.p.w / 2), Q.el.width - (this.p.w / 2));
+            this.p.y = clamp(this.p.y, 0 + (this.p.h / 2), Q.el.height - (this.p.h / 2));
 
-        //console.log(this.p.x + " " + this.p.y + " " + this.p.angle);
+            //console.log(this.p.x + " " + this.p.y + " " + this.p.angle);
+        }
     }
-
 });
 
 Q.Sprite.extend("Shot", {
@@ -150,7 +162,6 @@ Q.component("GunOne", {
                 } 
             };
             if(Q.inputs['fire']){
-                this.play("explode");
                 this.fire();
             }
         },
@@ -176,11 +187,13 @@ Q.component("GunOne", {
 });
 
 Q.component("GunTwo", {
+    /* when added to object */
     added: function(){
         this.entity.p.shots = [];
         this.entity.p.canFire = true;
         this.entity.on("step", "handleFiring");
     },
+    
     extend: {
         handleFiring: function(){
             var entity = this;
@@ -215,7 +228,7 @@ Q.component("GunTwo", {
 });
 
 Q.animations('blast', {
-    explode: {frames: [1,2,3,4], rate:1/2}
+    explode: {frames: [9,10,11,12], rate:1/2, loop: false, trigger: 'kill'}
 });
 Q.scene("mainLevel", function(stage){
     Q.gravity = 0;
